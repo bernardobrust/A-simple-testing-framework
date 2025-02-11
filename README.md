@@ -10,9 +10,11 @@ The others are unnecessarily complex.
 
 Build the simplest single header test framework for C possible.
 
+Be usable for my other projects.
+
 ## Design
 
-Simplicity over all
+Simplicity over all.
 
 ## Sources of knowledge
 
@@ -31,10 +33,15 @@ Examples should do the trick.
 ## Progress so far
 
 [] - Asserts
+
 [] - Test suites
+
 [] - Run all / run suites
+
 [] - Colors
+
 [] - Skips
+
 [] - Other stuff...
 
 I'll have to edit this latter anyway
