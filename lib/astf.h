@@ -36,11 +36,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // A simple test framework (astf) for C
 
 // Colors
-static const char *astf_output_red = "\0\033[1;31m";
-static const char *astf_output_green = "\0\033[0;32m";
-static const char *astf_output_yellow = "\0\033[0;33m";
-static const char *astf_output_cyan = "\0\033[1;36m";
-static const char *astf_output_normal = "\0\033[0m";
+#define astf_output_fail "\x1b[31m"
+#define astf_output_pass "\x1b[32m"
+#define astf_output_warn "\x1b[33m"
+#define astf_output_info "\x1b[36m"
+#define astf_output_normal "\x1b[0m"
 
 // Test counters
 static int astf_tests_to_run = 0;
@@ -50,22 +50,21 @@ static int astf_tests_passed = 0;
 
 static inline void astf_print_init_tests() {
   printf("\n");
-  printf("%sRunning %d tests...\n", astf_output_normal, astf_tests_to_run);
+  printf(astf_output_info "Running %d tests...", astf_tests_to_run);
   printf("\n");
 }
 
 static inline void astf_print_results() {
-  printf("%sFinished running %d tests\n", astf_output_normal,
-         astf_tests_finished);
+  printf(astf_output_info "Finished running %d tests\n", astf_tests_finished);
 
   // Print amount of tests passed and failed
   if (astf_tests_passed == astf_tests_to_run) {
-    printf("%sAll tests passed!\n", astf_output_green);
+    printf(astf_output_pass "All tests passed!\n");
   } else {
-    printf("%s%d tests passed\n", astf_output_green, astf_tests_passed);
-    printf("%s%d tests failed\n", astf_output_red, astf_tests_failed);
+    printf(astf_output_pass "%d |> tests passed!\n", astf_tests_passed);
+    printf(astf_output_fail "%d |> tests failed ;-;\n", astf_tests_failed);
   }
-  printf("\n");
+  printf(astf_output_normal "\n");
 }
 
 /*
