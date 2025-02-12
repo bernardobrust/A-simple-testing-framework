@@ -38,7 +38,7 @@ Examples should do the trick.
 
 [] - Run all / run suites
 
-[] - Colors
+[x] - Colors
 
 [] - Skips
 
