@@ -59,6 +59,7 @@ static int astf_tests_passed = 0;
 // ---------------------------------------------------------------
 typedef struct astf_test_list_t astf_test_list_t, *add_test, *get_test_message;
 struct astf_test_list_t {
+  bool exists;
   int size;
   int test_id[ASTF_MAX_TESTS];
   char *test_message[ASTF_MAX_TESTS];
@@ -67,22 +68,14 @@ struct astf_test_list_t {
   char *(*get_test_message)(astf_test_list_t *list, int test_id);
 };
 
-void test_list_add_test(astf_test_list_t *list, char *message) {
+void astf_test_list_add_test(astf_test_list_t *list, char *message) {
   list->test_id[list->size] = list->size;
   list->test_message[list->size] = (char *)malloc(strlen(message) + 1);
   strcpy(list->test_message[list->size], message);
   list->size++;
 }
-char *test_list_get_test_message(astf_test_list_t *list, int test_id) {
+char *astf_test_list_get_test_message(astf_test_list_t *list, int test_id) {
   return list->test_message[test_id];
-}
-
-astf_test_list_t astf_init_test_list() {
-  astf_test_list_t list;
-  list.size = 0;
-  list.add_test = test_list_add_test;
-  list.get_test_message = test_list_get_test_message;
-  return list;
 }
 
 // ---------------------------------------------------------------
@@ -98,18 +91,48 @@ astf_test_list_t astf_init_test_list() {
 
 static astf_test_list_t astf_test_list;
 
+static inline void astf_reset_test_list(astf_test_list_t *list) {
+  // Clearing the ids
+  memset(astf_test_list.test_id, 0, (unsigned long)astf_test_list.size);
+
+  // Freeing messages
+  for (int i = 0; i < astf_test_list.size; i++) {
+    // ! Never forget freedom
+    free(astf_test_list.test_message[i]);
+  }
+
+  // Reseting size
+  list->size = 0;
+
+  // Reseting the counters
+  astf_tests_to_run = 0;
+  astf_tests_finished = 0;
+  astf_tests_failed = 0;
+  astf_tests_passed = 0;
+}
+
+inline static void astf_init_test_list() {
+  if (!astf_test_list.exists) {
+    astf_test_list.add_test = astf_test_list_add_test;
+    astf_test_list.get_test_message = astf_test_list_get_test_message;
+    astf_test_list.exists = true;
+  } else {
+    astf_reset_test_list(&astf_test_list);
+  }
+}
+
 static inline void astf_print_init_tests() {
   printf("\n");
-  printf(astf_output_info "Running %d tests...", astf_tests_to_run);
+  printf(astf_output_info "Running tests...");
   printf("\n");
 }
 
 static inline void astf_start_testing() {
-  astf_test_list = astf_init_test_list();
+  astf_init_test_list();
   astf_print_init_tests();
 }
 
-static inline void astf_print_results() {
+static inline void astf_retrieve_results() {
   printf(astf_output_info "Finished running %d tests\n", astf_tests_finished);
 
   // Print amount of tests passed and failed
@@ -126,12 +149,12 @@ static inline void astf_print_results() {
       if (strcmp(message, ASTF_PASSED) != 0) {
         printf(astf_output_fail "|> %s\n", message);
       }
-
-      // ! Never forget freedom
-      free(message);
     }
   }
   printf(astf_output_normal "\n");
+
+  // Reseting the test list
+  astf_reset_test_list(&astf_test_list);
 }
 
 /*

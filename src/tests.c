@@ -7,7 +7,7 @@ int fibonacci(int n) {
   return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
-int main() {
+void test_suite1() {
   astf_start_testing();
 
   // Should pass
@@ -38,7 +38,23 @@ int main() {
   void *null_pointer2 = NULL;
   astf_assert_not_null(null_pointer2);
 
-  astf_print_results();
+  astf_retrieve_results();
+}
+
+void test_suite2() {
+  astf_start_testing();
+
+  void *null_pointer = NULL;
+  astf_assert_null(null_pointer);
+  int fib6 = fibonacci(6);
+  astf_assert_not_null(&fib6);
+
+  astf_retrieve_results();
+}
+
+int main() {
+  test_suite1();
+  test_suite2();
 
   return 0;
 }
