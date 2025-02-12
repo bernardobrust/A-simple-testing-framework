@@ -32,15 +32,15 @@ Examples should do the trick.
 
 ## Progress so far
 
-[] - Asserts
+[only ints] - Asserts
 
-[] - Test suites
+[kind of] - Test suites
 
-[] - Run all / run suites
+[kind of] - Run all / run suites
 
 [x] - Colors
 
-[] - Skips
+[kind of] - Skips
 
 [] - Other stuff...
 

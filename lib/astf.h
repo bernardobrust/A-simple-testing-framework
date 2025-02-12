@@ -138,6 +138,15 @@ static inline void astf_retrieve_results() {
   // Print amount of tests passed and failed
   if (astf_tests_passed == astf_tests_to_run) {
     printf(astf_output_pass "All tests passed!\n");
+  } else if (astf_tests_failed == astf_tests_to_run) {
+    printf(astf_output_fail "Literally everything went wrong.\n");
+    printf(astf_output_fail "Like, every single test failed.\n");
+    printf("\n");
+
+    for (int i = 0; i < astf_test_list.size; i++) {
+      char *message = astf_test_list.get_test_message(&astf_test_list, i);
+      printf(astf_output_fail "|> %s\n", message);
+    }
   } else {
     printf(astf_output_pass "|> %d tests passed!\n", astf_tests_passed);
     printf(astf_output_fail "|> %d tests failed ;-;\n", astf_tests_failed);

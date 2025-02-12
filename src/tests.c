@@ -52,9 +52,21 @@ void test_suite2() {
   astf_retrieve_results();
 }
 
+void test_suite3() {
+  astf_start_testing();
+
+  int fib8 = fibonacci(8);
+  astf_assert_null(&fib8);
+  void *null_pointer = NULL;
+  astf_assert_not_null(null_pointer);
+
+  astf_retrieve_results();
+}
+
 int main() {
   test_suite1();
   test_suite2();
+  test_suite3();
 
   return 0;
 }
