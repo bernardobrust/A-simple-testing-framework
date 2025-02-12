@@ -38,7 +38,7 @@ Examples should do the trick.
 
 ## Progress so far
 
-[main ones] - Asserts
+[x] - Asserts
 
 [x] - Test suites
 
