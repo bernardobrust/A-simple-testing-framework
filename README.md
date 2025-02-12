@@ -22,11 +22,7 @@ Be usable for my other projects.
 
 Simplicity over all.
 
-## Sources of knowledge
-
-[tst](https://github.com/rdentato/tst)
-
-My uni Profs.
+ASTF offers a very minimal and easy to use testing infrastructure.
 
 ## Tests
 
@@ -48,6 +44,12 @@ Examples should do the trick.
 
 [user made] - Skips
 
-[] - Other stuff...
+## Tutorial
 
-I'll have to edit this latter anyway
+Create a ```void``` function with the name of your test suite.
+
+Then, add ```astf_start_test_suite("");``` at the top of the function with the name of your test suite as the argument, and ```astf_retrieve_results();``` at the end to get the results.
+
+In between, add ```astf_...()``` with the assert type and the data type of the arguments. a.k.a ```astf_AE_int(a, b)``` for "Asset equal for ints".
+
+More examples available at src/tests.c
