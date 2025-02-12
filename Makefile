@@ -3,8 +3,8 @@ PROJECT:=TestFramework
 CC:=clang
 
 CERROR:= -Wall -Wextra -Werror -Walloca -Wcast-qual -Wconversion -Wdouble-promotion -Wfloat-equal -Wswitch-default -Wswitch-enum -g
-CFLAGS:=-std=c23 -O2 $(CERROR)
-LDFLAGS:= -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
+CFLAGS:=-std=c23 -O3 -ffast-math $(CERROR)
+LDFLAGS:=
 
 SRC_DIR:=src
 INC_DIR:=lib
