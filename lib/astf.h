@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -167,15 +168,14 @@ static inline void astf_retrieve_results() {
 }
 
 /*
-The int is just a placeholder for now
-I'll have to do generics later
+As it turns out, doing generics in C is dangerous and hard
+So I just did different implementations for each type
 */
 
 // ? 2 variable tests
 // ---------------------------------------------------------------
-
 // ? Equality test
-static inline void astf_assert_equals(int a, int b) {
+static inline void astf_assert_equals_int(int a, int b) {
   bool failed = false;
 
   astf_tests_to_run++;
@@ -198,9 +198,57 @@ static inline void astf_assert_equals(int a, int b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
+static inline void astf_assert_equals_float(float a, float b) {
+  bool failed = false;
+
+  astf_tests_to_run++;
+  if (fabsf(a - b) < 0.0001f) {
+    astf_tests_passed++;
+  } else {
+    astf_tests_failed++;
+    failed = true;
+  }
+  astf_tests_finished++;
+
+  if (failed) {
+    char buffer[ASTF_MAX_MESSAGE_SIZE];
+    unsigned long max_len = sizeof(buffer);
+    snprintf(buffer, max_len,
+             astf_output_fail "Test %d failed, '%f' and '%f' are different",
+             astf_tests_finished, (double)a, (double)b);
+    astf_test_list.add_test(&astf_test_list, buffer);
+  } else {
+    astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
+  }
+}
+static inline void astf_assert_equals_string(char *a, char *b) {
+  bool failed = false;
+
+  astf_tests_to_run++;
+  if (strcmp(a, b) == 0) {
+    astf_tests_passed++;
+  } else {
+    astf_tests_failed++;
+    failed = true;
+  }
+  astf_tests_finished++;
+
+  if (failed) {
+    char buffer[ASTF_MAX_MESSAGE_SIZE];
+    unsigned long max_len = sizeof(buffer);
+    snprintf(buffer, max_len,
+             astf_output_fail "Test %d failed, '%s' and '%s' are different",
+             astf_tests_finished, a, b);
+    astf_test_list.add_test(&astf_test_list, buffer);
+  } else {
+    astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
+  }
+}
+// ---------------------------------------------------------------
 
 // ? Inequality test
-static inline void astf_assert_not_equals(int a, int b) {
+// ---------------------------------------------------------------
+static inline void astf_assert_not_equals_int(int a, int b) {
   bool failed = false;
 
   astf_tests_to_run++;
@@ -223,9 +271,57 @@ static inline void astf_assert_not_equals(int a, int b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
+static inline void astf_assert_not_equals_float(float a, float b) {
+  bool failed = false;
 
-// ? Greater than test
-static inline void astf_assert_greater_than(int a, int b) {
+  astf_tests_to_run++;
+  if (fabsf(a - b) > 0.0001f) {
+    astf_tests_passed++;
+  } else {
+    astf_tests_failed++;
+    failed = true;
+  }
+  astf_tests_finished++;
+
+  if (failed) {
+    char buffer[ASTF_MAX_MESSAGE_SIZE];
+    unsigned long max_len = sizeof(buffer);
+    snprintf(buffer, max_len,
+             astf_output_fail "Test %d failed, '%f' and '%f' are equal",
+             astf_tests_finished, (double)a, (double)b);
+    astf_test_list.add_test(&astf_test_list, buffer);
+  } else {
+    astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
+  }
+}
+static inline void astf_assert_not_equals_string(char *a, char *b) {
+  bool failed = false;
+
+  astf_tests_to_run++;
+  if (strcmp(a, b) != 0) {
+    astf_tests_passed++;
+  } else {
+    astf_tests_failed++;
+    failed = true;
+  }
+  astf_tests_finished++;
+
+  if (failed) {
+    char buffer[ASTF_MAX_MESSAGE_SIZE];
+    unsigned long max_len = sizeof(buffer);
+    snprintf(buffer, max_len,
+             astf_output_fail "Test %d failed, '%s' and '%s' are equal",
+             astf_tests_finished, a, b);
+    astf_test_list.add_test(&astf_test_list, buffer);
+  } else {
+    astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
+  }
+}
+// ---------------------------------------------------------------
+
+// ? Comparaison tests
+// ---------------------------------------------------------------
+static inline void astf_assert_greater_than_int(int a, int b) {
   bool failed = false;
 
   astf_tests_to_run++;
@@ -248,9 +344,31 @@ static inline void astf_assert_greater_than(int a, int b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
+static inline void astf_assert_greater_than_float(float a, float b) {
+  bool failed = false;
 
-// ? Less than test
-static inline void astf_assert_less_than(int a, int b) {
+  astf_tests_to_run++;
+  if (a > b) {
+    astf_tests_passed++;
+  } else {
+    astf_tests_failed++;
+    failed = true;
+  }
+  astf_tests_finished++;
+  if (failed) {
+    char buffer[ASTF_MAX_MESSAGE_SIZE];
+    unsigned long max_len = sizeof(buffer);
+    snprintf(buffer, max_len,
+             astf_output_fail
+             "Test %d failed, '%f' is smaller or equal to '%f'",
+             astf_tests_finished, (double)a, (double)b);
+    astf_test_list.add_test(&astf_test_list, buffer);
+  } else {
+    astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
+  }
+}
+
+static inline void astf_assert_less_than_int(int a, int b) {
   bool failed = false;
 
   astf_tests_to_run++;
@@ -274,11 +392,33 @@ static inline void astf_assert_less_than(int a, int b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
+static inline void astf_assert_less_than_float(float a, float b) {
+  bool failed = false;
+
+  astf_tests_to_run++;
+  if (a < b) {
+    astf_tests_passed++;
+  } else {
+    astf_tests_failed++;
+    failed = true;
+  }
+  astf_tests_finished++;
+  if (failed) {
+    char buffer[ASTF_MAX_MESSAGE_SIZE];
+    unsigned long max_len = sizeof(buffer);
+    snprintf(buffer, max_len,
+             astf_output_fail
+             "Test %d failed, '%f' is smaller or equal to '%f'",
+             astf_tests_finished, (double)a, (double)b);
+    astf_test_list.add_test(&astf_test_list, buffer);
+  } else {
+    astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
+  }
+}
 // ---------------------------------------------------------------
 
 // ? 1 variable tests
 // ---------------------------------------------------------------
-
 // ? Truth test
 static inline void astf_assert_true(bool a) {
   bool failed = false;
@@ -304,7 +444,7 @@ static inline void astf_assert_true(bool a) {
 }
 
 // ? False test
-static inline void astf_assert_false(int a) {
+static inline void astf_assert_false(bool a) {
   bool failed = false;
 
   astf_tests_to_run++;
