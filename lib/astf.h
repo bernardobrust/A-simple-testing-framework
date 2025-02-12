@@ -80,17 +80,6 @@ char *astf_test_list_get_test_message(astf_test_list_t *list, int test_id) {
   return list->test_message[test_id];
 }
 
-// ---------------------------------------------------------------
-
-// * Test suite TODO
-// ---------------------------------------------------------------
-
-// I already know implementing this is going to be a pain in the ass
-
-// void astf_create_test_suite(char *name) {}
-
-// ---------------------------------------------------------------
-
 static astf_test_list_t astf_test_list;
 
 static inline void astf_reset_test_list(astf_test_list_t *list) {
