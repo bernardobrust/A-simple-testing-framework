@@ -8,7 +8,7 @@ int fibonacci(int n) {
 }
 
 void test_suite1() {
-  astf_start_testing();
+  astf_start_test_suite("One");
 
   // Should pass
   astf_assert_equals_int(fibonacci(0), 0);
@@ -42,7 +42,7 @@ void test_suite1() {
 }
 
 void test_suite2() {
-  astf_start_testing();
+  astf_start_test_suite("Two");
 
   void *null_pointer = NULL;
   astf_assert_null(null_pointer);
@@ -53,7 +53,7 @@ void test_suite2() {
 }
 
 void test_suite3() {
-  astf_start_testing();
+  astf_start_test_suite("Three");
 
   int fib8 = fibonacci(8);
   astf_assert_null(&fib8);

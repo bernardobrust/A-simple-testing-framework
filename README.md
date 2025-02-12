@@ -34,7 +34,7 @@ Examples should do the trick.
 
 [main ones] - Asserts
 
-[user made] - Test suites
+[x] - Test suites
 
 [user made] - Run all / run suites
 

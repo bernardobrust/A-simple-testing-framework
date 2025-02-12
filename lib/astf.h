@@ -29,14 +29,14 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// * A simple test framework (astf) for C
+
 #pragma once
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-// * A simple test framework (astf) for C
 
 #define ASTF_MAX_TESTS 1000
 #define ASTF_MAX_MESSAGE_SIZE 256
@@ -64,6 +64,7 @@ struct astf_test_list_t {
   int size;
   int test_id[ASTF_MAX_TESTS];
   char *test_message[ASTF_MAX_TESTS];
+  char name[ASTF_MAX_MESSAGE_SIZE];
 
   void (*add_test)(astf_test_list_t *list, char *message);
   char *(*get_test_message)(astf_test_list_t *list, int test_id);
@@ -110,9 +111,12 @@ static inline void astf_reset_test_list(astf_test_list_t *list) {
   astf_tests_finished = 0;
   astf_tests_failed = 0;
   astf_tests_passed = 0;
+
+  // Reseting the suite name
+  memset(astf_test_list.name, 0, ASTF_MAX_MESSAGE_SIZE);
 }
 
-inline static void astf_init_test_list() {
+inline static void astf_init_test_list(char *suite_name) {
   if (!astf_test_list.exists) {
     astf_test_list.add_test = astf_test_list_add_test;
     astf_test_list.get_test_message = astf_test_list_get_test_message;
@@ -120,20 +124,19 @@ inline static void astf_init_test_list() {
   } else {
     astf_reset_test_list(&astf_test_list);
   }
+  memcpy(astf_test_list.name, suite_name, strlen(suite_name) + 1);
 }
 
-static inline void astf_print_init_tests() {
+static inline void astf_start_test_suite(char *suite_name) {
+  astf_init_test_list(suite_name);
   printf("\n");
   printf(astf_output_info "Running tests...");
   printf("\n");
 }
 
-static inline void astf_start_testing() {
-  astf_init_test_list();
-  astf_print_init_tests();
-}
-
 static inline void astf_retrieve_results() {
+  printf(astf_output_info "Running tests from suite '%s'\n",
+         astf_test_list.name);
   printf(astf_output_info "Finished running %d tests\n", astf_tests_finished);
 
   // Print amount of tests passed and failed
