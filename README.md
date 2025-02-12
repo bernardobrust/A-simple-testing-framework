@@ -1,4 +1,10 @@
-# A simple interpreter
+# A simple test suite
+
+## Warning
+
+This project was developed in one day for personal goals
+
+Do not expect this to be a viable testing framework
 
 ## Why?
 
