@@ -1,10 +1,10 @@
-# A simple test suite
+# A simple test framework
 
 ## Warning
 
-This project was developed in one day for personal goals
+This project was developed in one day for my personal goals.
 
-Do not expect this to be a viable testing framework
+Please do not expect this to be a viable testing framework.
 
 ## Why?
 
@@ -12,23 +12,11 @@ This project aims to be a simple testing framework for C.
 
 The others are unnecessarily complex.
 
-## Goals
-
-Build the simplest single header test framework for C possible.
-
-Be usable for my other projects.
-
 ## Design
 
 Simplicity over all.
 
 ASTF offers a very minimal and easy to use testing infrastructure.
-
-## Tests
-
-Kind of hard to test a testing framework.
-
-Examples should do the trick.
 
 ***
 

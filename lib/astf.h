@@ -51,37 +51,57 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define ASTF_PASSED astf_output_pass "Test passed" astf_output_normal
 
 // Test counters
-static int astf_tests_to_run = 0;
-static int astf_tests_finished = 0;
-static int astf_tests_failed = 0;
-static int astf_tests_passed = 0;
+static int astf_tests_to_run = {0};
+static int astf_tests_finished = {0};
+static int astf_tests_failed = {0};
+static int astf_tests_passed = {0};
 
 // * Test list
 // ---------------------------------------------------------------
 typedef struct astf_test_list_t astf_test_list_t, *add_test, *get_test_message;
 struct astf_test_list_t {
-  bool exists;
-  int size;
-  int test_id[ASTF_MAX_TESTS];
-  char *test_message[ASTF_MAX_TESTS];
-  char name[ASTF_MAX_MESSAGE_SIZE];
+  bool exists; // If the list already has the function pointers attached
+  int size;    // Number of tests
+  int test_id[ASTF_MAX_TESTS];        // Test id's
+  char *test_message[ASTF_MAX_TESTS]; // Messages (ASTF_PASSED or the error
+                                      // message)
+  char name[ASTF_MAX_MESSAGE_SIZE];   // Test suite name
 
   void (*add_test)(astf_test_list_t *list, char *message);
-  char *(*get_test_message)(astf_test_list_t *list, int test_id);
+  char *(*get_test_message)(astf_test_list_t *list, const int test_id);
 };
 
+/**
+ * @brief Internal usage, adds a test  to the list
+ *
+ * @param list The current test suite
+ * @param message ASTF_PASSED or the error message
+ */
 void astf_test_list_add_test(astf_test_list_t *list, char *message) {
   list->test_id[list->size] = list->size;
   list->test_message[list->size] = (char *)malloc(strlen(message) + 1);
   strcpy(list->test_message[list->size], message);
   list->size++;
 }
-char *astf_test_list_get_test_message(astf_test_list_t *list, int test_id) {
+/**
+ * @brief Internal usage, gets the message from the test
+ *
+ * @param list The current test suite
+ * @param test_id The number of the test in the suite
+ * @return char* The message of given test
+ */
+char *astf_test_list_get_test_message(astf_test_list_t *list,
+                                      const int test_id) {
   return list->test_message[test_id];
 }
 
-static astf_test_list_t astf_test_list;
+static astf_test_list_t astf_test_list = {};
 
+/**
+ * @brief Internal usage, resets the test list after the test suite ends
+ *
+ * @param list The current test suite
+ */
 static inline void astf_reset_test_list(astf_test_list_t *list) {
   // Clearing the ids
   memset(astf_test_list.test_id, 0, (unsigned long)astf_test_list.size);
@@ -105,7 +125,12 @@ static inline void astf_reset_test_list(astf_test_list_t *list) {
   memset(astf_test_list.name, 0, ASTF_MAX_MESSAGE_SIZE);
 }
 
-inline static void astf_init_test_list(char *suite_name) {
+/**
+ * @brief Internal usage, Initialises the test suite
+ *
+ * @param suite_name Name of the test suite
+ */
+inline static void astf_init_test_list(const char *suite_name) {
   if (!astf_test_list.exists) {
     astf_test_list.add_test = astf_test_list_add_test;
     astf_test_list.get_test_message = astf_test_list_get_test_message;
@@ -116,13 +141,22 @@ inline static void astf_init_test_list(char *suite_name) {
   memcpy(astf_test_list.name, suite_name, strlen(suite_name) + 1);
 }
 
-static inline void astf_start_test_suite(char *suite_name) {
+/**
+ * @brief Start a new test suite
+ *
+ * @param suite_name Name of the test suite
+ */
+static inline void astf_start_test_suite(const char *suite_name) {
   astf_init_test_list(suite_name);
   printf("\n");
   printf(astf_output_info "Running tests...");
   printf("\n");
 }
 
+/**
+ * @brief Finishes the current test suite and prints the results
+ *
+ */
 static inline void astf_retrieve_results() {
   printf(astf_output_info "Running tests from suite '%s'\n",
          astf_test_list.name);
@@ -167,8 +201,14 @@ So I just did different implementations for each type
 // ? 2 variable tests
 // ---------------------------------------------------------------
 // ? Equality test
-static inline void astf_AE_int(int a, int b) {
-  bool failed = false;
+/**
+ * @brief Asserts two ints are equal
+ *
+ * @param a Int produced
+ * @param b Expected result
+ */
+static inline void astf_AE_int(const int a, const int b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a == b) {
@@ -190,8 +230,14 @@ static inline void astf_AE_int(int a, int b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_AF_float(float a, float b) {
-  bool failed = false;
+/**
+ * @brief Asserts two floats are equal
+ *
+ * @param a Float produced
+ * @param b Expected result
+ */
+static inline void astf_AF_float(const float a, const float b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (fabsf(a - b) < 0.0001f) {
@@ -213,8 +259,14 @@ static inline void astf_AF_float(float a, float b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_AE_string(char *a, char *b) {
-  bool failed = false;
+/**
+ * @brief Asserts two strings are equal
+ *
+ * @param a String produced
+ * @param b Expected result
+ */
+static inline void astf_AE_string(const char *a, const char *b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (strcmp(a, b) == 0) {
@@ -240,8 +292,14 @@ static inline void astf_AE_string(char *a, char *b) {
 
 // ? Inequality test
 // ---------------------------------------------------------------
-static inline void astf_ANE_int(int a, int b) {
-  bool failed = false;
+/**
+ * @brief Asserts two int are different
+ *
+ * @param a Int produced
+ * @param b Expected result
+ */
+static inline void astf_ANE_int(const int a, const int b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a != b) {
@@ -263,8 +321,14 @@ static inline void astf_ANE_int(int a, int b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_ANE_float(float a, float b) {
-  bool failed = false;
+/**
+ * @brief Asserts two floats are different
+ *
+ * @param a Float produced
+ * @param b Expected result
+ */
+static inline void astf_ANE_float(const float a, const float b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (fabsf(a - b) > 0.0001f) {
@@ -286,8 +350,14 @@ static inline void astf_ANE_float(float a, float b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_ANE_string(char *a, char *b) {
-  bool failed = false;
+/**
+ * @brief Asserts two strings are different
+ *
+ * @param a String produced
+ * @param b Expected result
+ */
+static inline void astf_ANE_string(const char *a, const char *b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (strcmp(a, b) != 0) {
@@ -313,8 +383,14 @@ static inline void astf_ANE_string(char *a, char *b) {
 
 // ? Comparaison tests
 // ---------------------------------------------------------------
-static inline void astf_AG_int(int a, int b) {
-  bool failed = false;
+/**
+ * @brief Asserts int a is grater than int b
+ *
+ * @param a Int expected to be bigger
+ * @param b Int expected to be smaller or equal
+ */
+static inline void astf_AG_int(const int a, const int b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a > b) {
@@ -336,8 +412,14 @@ static inline void astf_AG_int(int a, int b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_AG_float(float a, float b) {
-  bool failed = false;
+/**
+ * @brief Asserts float a is grater than float b
+ *
+ * @param a Float expected to be bigger
+ * @param b Float expected to be smaller or equal
+ */
+static inline void astf_AG_float(const float a, const float b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a > b) {
@@ -359,8 +441,14 @@ static inline void astf_AG_float(float a, float b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_AGE_int(int a, int b) {
-  bool failed = false;
+/**
+ * @brief Asserts int a is grater than or equal to int b
+ *
+ * @param a Int expected to be bigger or equal
+ * @param b Int expected to be smaller
+ */
+static inline void astf_AGE_int(const int a, const int b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a >= b) {
@@ -381,8 +469,14 @@ static inline void astf_AGE_int(int a, int b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_AGE_float(float a, float b) {
-  bool failed = false;
+/**
+ * @brief Asserts float a is grater than or equal to float b
+ *
+ * @param a Float expected to be bigger or equal
+ * @param b Float expected to be smaller
+ */
+static inline void astf_AGE_float(const float a, const float b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a >= b) {
@@ -403,8 +497,14 @@ static inline void astf_AGE_float(float a, float b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_AL_int(int a, int b) {
-  bool failed = false;
+/**
+ * @brief Asserts int a is lesser than int b
+ *
+ * @param a Int expected to be smaller
+ * @param b Int expected to be bigger or equal
+ */
+static inline void astf_AL_int(const int a, const int b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a < b) {
@@ -427,8 +527,14 @@ static inline void astf_AL_int(int a, int b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_AL_float(float a, float b) {
-  bool failed = false;
+/**
+ * @brief Asserts float a is lesser than float b
+ *
+ * @param a Float expected to be smaller
+ * @param b Float expected to be bigger or equal
+ */
+static inline void astf_AL_float(const float a, const float b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a < b) {
@@ -450,8 +556,14 @@ static inline void astf_AL_float(float a, float b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_ALE_int(int a, int b) {
-  bool failed = false;
+/**
+ * @brief Asserts int a is lesser than or equal to int b
+ *
+ * @param a Int expected to be smaller or equal
+ * @param b Int expected to be bigger
+ */
+static inline void astf_ALE_int(const int a, const int b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a <= b) {
@@ -473,8 +585,14 @@ static inline void astf_ALE_int(int a, int b) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-static inline void astf_ALE_float(float a, float b) {
-  bool failed = false;
+/**
+ * @brief Asserts float a is lesser than or equal to float b
+ *
+ * @param a Float expected to be smaller or equal
+ * @param b Float expected to be bigger
+ */
+static inline void astf_ALE_float(const float a, const float b) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a <= b) {
@@ -500,8 +618,13 @@ static inline void astf_ALE_float(float a, float b) {
 // ? 1 variable tests
 // ---------------------------------------------------------------
 // ? Truth test
-static inline void astf_AE(bool a) {
-  bool failed = false;
+/**
+ * @brief Asserts a condition is true
+ *
+ * @param a The condition
+ */
+static inline void astf_AE(const bool a) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a) {
@@ -522,10 +645,13 @@ static inline void astf_AE(bool a) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-
-// ? False test
-static inline void astf_AF(bool a) {
-  bool failed = false;
+/**
+ * @brief Asserts a condition is false
+ *
+ * @param a The condition
+ */
+static inline void astf_AF(const bool a) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (!a) {
@@ -548,8 +674,13 @@ static inline void astf_AF(bool a) {
 }
 
 // ? Null test
-static inline void astf_A_null(void *a) {
-  bool failed = false;
+/**
+ * @brief Asserts a pointer is null
+ *
+ * @param a The pointer
+ */
+static inline void astf_A_null(const void *a) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a == NULL) {
@@ -571,10 +702,13 @@ static inline void astf_A_null(void *a) {
     astf_test_list.add_test(&astf_test_list, ASTF_PASSED);
   }
 }
-
-// ? Non null test
-static inline void astf_AN_null(void *a) {
-  bool failed = false;
+/**
+ * @brief Asserts a pointer is not null
+ *
+ * @param a The pointer
+ */
+static inline void astf_AN_null(const void *a) {
+  bool failed = {false};
 
   astf_tests_to_run++;
   if (a != NULL) {

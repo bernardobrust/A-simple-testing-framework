@@ -1,6 +1,6 @@
 #include "astf.h"
 
-int fibonacci(int n) {
+int fibonacci(const int n) {
   if (n <= 1) {
     return n;
   }
