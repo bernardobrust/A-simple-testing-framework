@@ -1,3 +1,5 @@
+// * A simple test framework (astf) for C
+
 /*
 BSD 3-Clause License
 
@@ -28,8 +30,6 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-// * A simple test framework (astf) for C
 
 #pragma once
 
@@ -192,11 +192,6 @@ static inline void astf_retrieve_results() {
   // Reseting the test list
   astf_reset_test_list(&astf_test_list);
 }
-
-/*
-As it turns out, doing generics in C is dangerous and hard
-So I just did different implementations for each type
-*/
 
 // ? 2 variable tests
 // ---------------------------------------------------------------

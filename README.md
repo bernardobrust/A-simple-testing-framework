@@ -34,6 +34,8 @@ ASTF offers a very minimal and easy to use testing infrastructure.
 
 ## Tutorial
 
+Copy the "astf.h" header to the location you put your projects libraries and include it where you want to test.
+
 Create a ```void``` function with the name of your test suite.
 
 Then, add ```astf_start_test_suite("");``` at the top of the function with the name of your test suite as the argument, and ```astf_retrieve_results();``` at the end to get the results.
