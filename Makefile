@@ -3,7 +3,7 @@ PROJECT:=TestFramework
 CC:=clang
 
 CERROR:= -Wall -Wextra -Werror -Walloca -Wcast-qual -Wconversion -Wdouble-promotion -Wfloat-equal -Wswitch-default -Wswitch-enum -g
-CFLAGS:=-std=c23 -O3 -ffast-math $(CERROR)
+CFLAGS:=-std=c2x -O3 -ffast-math $(CERROR)
 LDFLAGS:=
 
 SRC_DIR:=src
@@ -14,6 +14,8 @@ DEBUG_DIR:=debug
 SRC_FILES=$(wildcard $(SRC_DIR)/*.c)
 
 $(PROJECT): $(SRC_FILES)
+	mkdir -p build
+	mkdir -p debug
 	$(CC) $(CFLAGS) -I$(INC_DIR)/ -o $(OUT_DIR)/$(PROJECT) $(SRC_FILES) $(LDFLAGS)
 	make run
 
