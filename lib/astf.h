@@ -77,7 +77,8 @@ struct astf_test_list_t {
  * @param list The current test suite
  * @param message ASTF_PASSED or the error message
  */
-void astf_test_list_add_test(astf_test_list_t *list, char *message) {
+static inline void astf_test_list_add_test(astf_test_list_t *list,
+                                           char *message) {
   list->test_id[list->size] = list->size;
   list->test_message[list->size] = (char *)malloc(strlen(message) + 1);
   strcpy(list->test_message[list->size], message);
@@ -90,8 +91,8 @@ void astf_test_list_add_test(astf_test_list_t *list, char *message) {
  * @param test_id The number of the test in the suite
  * @return char* The message of given test
  */
-char *astf_test_list_get_test_message(astf_test_list_t *list,
-                                      const int test_id) {
+static inline char *astf_test_list_get_test_message(astf_test_list_t *list,
+                                                    const int test_id) {
   return list->test_message[test_id];
 }
 
@@ -206,6 +207,7 @@ static inline void astf_AE_int(const int a, const int b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a == b) {
     astf_tests_passed++;
   } else {
@@ -231,10 +233,11 @@ static inline void astf_AE_int(const int a, const int b) {
  * @param a Float produced
  * @param b Expected result
  */
-static inline void astf_AF_float(const float a, const float b) {
+static inline void astf_AE_float(const float a, const float b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (fabsf(a - b) < 0.0001f) {
     astf_tests_passed++;
   } else {
@@ -264,6 +267,7 @@ static inline void astf_AE_string(const char *a, const char *b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (strcmp(a, b) == 0) {
     astf_tests_passed++;
   } else {
@@ -297,6 +301,7 @@ static inline void astf_ANE_int(const int a, const int b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a != b) {
     astf_tests_passed++;
   } else {
@@ -326,6 +331,7 @@ static inline void astf_ANE_float(const float a, const float b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (fabsf(a - b) > 0.0001f) {
     astf_tests_passed++;
   } else {
@@ -355,6 +361,7 @@ static inline void astf_ANE_string(const char *a, const char *b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (strcmp(a, b) != 0) {
     astf_tests_passed++;
   } else {
@@ -388,6 +395,7 @@ static inline void astf_AG_int(const int a, const int b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a > b) {
     astf_tests_passed++;
   } else {
@@ -417,13 +425,16 @@ static inline void astf_AG_float(const float a, const float b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a > b) {
     astf_tests_passed++;
   } else {
     astf_tests_failed++;
     failed = true;
   }
+
   astf_tests_finished++;
+
   if (failed) {
     char buffer[ASTF_MAX_MESSAGE_SIZE];
     unsigned long max_len = sizeof(buffer);
@@ -446,6 +457,7 @@ static inline void astf_AGE_int(const int a, const int b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a >= b) {
     astf_tests_passed++;
   } else {
@@ -474,6 +486,7 @@ static inline void astf_AGE_float(const float a, const float b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a >= b) {
     astf_tests_passed++;
   } else {
@@ -502,6 +515,7 @@ static inline void astf_AL_int(const int a, const int b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a < b) {
     astf_tests_passed++;
   } else {
@@ -532,13 +546,16 @@ static inline void astf_AL_float(const float a, const float b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a < b) {
     astf_tests_passed++;
   } else {
     astf_tests_failed++;
     failed = true;
   }
+
   astf_tests_finished++;
+
   if (failed) {
     char buffer[ASTF_MAX_MESSAGE_SIZE];
     unsigned long max_len = sizeof(buffer);
@@ -561,12 +578,14 @@ static inline void astf_ALE_int(const int a, const int b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a <= b) {
     astf_tests_passed++;
   } else {
     astf_tests_failed++;
     failed = true;
   }
+
   astf_tests_finished++;
 
   if (failed) {
@@ -590,13 +609,16 @@ static inline void astf_ALE_float(const float a, const float b) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a <= b) {
     astf_tests_passed++;
   } else {
     astf_tests_failed++;
     failed = true;
   }
+
   astf_tests_finished++;
+
   if (failed) {
     char buffer[ASTF_MAX_MESSAGE_SIZE];
     unsigned long max_len = sizeof(buffer);
@@ -618,16 +640,18 @@ static inline void astf_ALE_float(const float a, const float b) {
  *
  * @param a The condition
  */
-static inline void astf_AE(const bool a) {
+static inline void astf_AT(const bool a) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a) {
     astf_tests_passed++;
   } else {
     astf_tests_failed++;
     failed = true;
   }
+
   astf_tests_finished++;
 
   if (failed) {
@@ -649,12 +673,14 @@ static inline void astf_AF(const bool a) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (!a) {
     astf_tests_passed++;
   } else {
     astf_tests_failed++;
     failed = true;
   }
+
   astf_tests_finished++;
 
   if (failed) {
@@ -678,12 +704,14 @@ static inline void astf_A_null(const void *a) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a == NULL) {
     astf_tests_passed++;
   } else {
     astf_tests_failed++;
     failed = true;
   }
+
   astf_tests_finished++;
 
   if (failed) {
@@ -706,12 +734,14 @@ static inline void astf_AN_null(const void *a) {
   bool failed = {false};
 
   astf_tests_to_run++;
+
   if (a != NULL) {
     astf_tests_passed++;
   } else {
     astf_tests_failed++;
     failed = true;
   }
+
   astf_tests_finished++;
 
   if (failed) {
