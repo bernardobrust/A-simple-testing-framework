@@ -1,8 +1,12 @@
 # A simple test framework
 
+## Mirror
+
+This project was originaly in my gitlab. It was built one year ago.
+
 ## Warning
 
-This project was developed in one day for my personal goals.
+This project was developed in a few days for my personal goals.
 
 Please do not expect this to be a viable testing framework.
 
@@ -32,7 +36,7 @@ ASTF offers a very minimal and easy to use testing infrastructure.
 
 [user made] - Skips
 
-## Tutorial
+## Tutorial (if you may call it that)
 
 Copy the "astf.h" header to the location you put your projects libraries and include it where you want to test.
 
