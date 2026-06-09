@@ -1,4 +1,7 @@
-# A simple test framework
+# A simple test framework (ASTF)
+
+## **UPDATE**
+I built a simpler and better version of ASTF called [ASTF-V2](https://github.com/bernardobrust/ASTF-V2). Check there instead of here.
 
 ## Mirror
 
